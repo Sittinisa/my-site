@@ -1,0 +1,2786 @@
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประเมินการสอน</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { box-sizing: border-box; }
+    * { font-family: 'Kanit', sans-serif; }
+    
+    :root {
+      --primary: #0052CC;
+      --secondary: #FF9800;
+      --success: #4CAF50;
+      --warning: #FFB74D;
+      --danger: #F44336;
+    }
+    
+    .bg-primary { background-color: var(--primary); }
+    .bg-secondary { background-color: var(--secondary); }
+    .bg-success { background-color: var(--success); }
+    .bg-warning { background-color: var(--warning); }
+    .bg-danger { background-color: var(--danger); }
+    
+    .text-primary { color: var(--primary); }
+    .border-primary { border-color: var(--primary); }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #003fa3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 82, 204, 0.4);
+    }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    .btn-danger:hover {
+      background-color: #d32f2f;
+    }
+    
+    .btn-warning {
+      background-color: var(--warning);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    .btn-warning:hover {
+      background-color: #FFA726;
+    }
+    
+    .sidebar {
+      transition: transform 0.3s ease, width 0.3s ease;
+    }
+    
+    .sidebar-overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s ease;
+    }
+    
+    .menu-item {
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      margin: 4px 8px;
+    }
+    .menu-item:hover, .menu-item.active {
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+      transform: translateX(4px);
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+    }
+    
+    .custom-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .custom-table th {
+      background: linear-gradient(135deg, var(--primary) 0%, #003fa3 100%);
+      color: white;
+      padding: 16px;
+      font-weight: 500;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .custom-table th:first-child {
+      border-radius: 12px 0 0 0;
+    }
+    .custom-table th:last-child {
+      border-radius: 0 12px 0 0;
+    }
+    .custom-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .custom-table tr:hover td {
+      background-color: #f5f9ff;
+    }
+    
+    .badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .modal {
+      transition: opacity 0.3s ease;
+    }
+    .modal-content {
+      animation: modalSlideIn 0.3s ease;
+    }
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    .alert {
+      animation: alertSlideIn 0.4s ease;
+    }
+    @keyframes alertSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .input-field {
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    .input-field:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.1);
+    }
+    
+    .select-field {
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+      background-color: white;
+      cursor: pointer;
+    }
+    .select-field:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    
+    .radio-rating {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .radio-rating label {
+      padding: 8px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 13px;
+    }
+    .radio-rating input:checked + label {
+      border-color: var(--primary);
+      background-color: rgba(0, 82, 204, 0.1);
+      color: var(--primary);
+    }
+    .radio-rating input {
+      display: none;
+    }
+    
+    .login-bg {
+      background: linear-gradient(135deg, #0052CC 0%, #003fa3 50%, #FF9800 100%);
+      min-height: 100%;
+    }
+    
+    .login-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+    
+    .tab-btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--primary) 0%, #003fa3 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 82, 204, 0.4);
+    }
+    .tab-btn:not(.active) {
+      background: #f5f5f5;
+      color: #666;
+    }
+    .tab-btn:not(.active):hover {
+      background: #e8e8e8;
+    }
+    
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .icon-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .stat-card {
+      border-radius: 16px;
+      padding: 20px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    
+    .logo-img {
+      max-height: 60px;
+      object-fit: contain;
+    }
+
+    .rating-score {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-weight: bold;
+      font-size: 12px;
+      color: white;
+    }
+    
+    .score-5 { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); }
+    .score-4 { background: linear-gradient(135deg, #8BC34A 0%, #7CB342 100%); }
+    .score-3 { background: linear-gradient(135deg, #FFC107 0%, #FFA000 100%); }
+    .score-2 { background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); }
+    .score-1 { background: linear-gradient(135deg, #F44336 0%, #E53935 100%); }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gray-100">
+  <div id="app" class="h-full"><!-- Loading Overlay -->
+   <div id="loadingOverlay" class="fixed inset-0 bg-white bg-opacity-90 z-50 hidden items-center justify-center flex-col">
+    <div class="spinner mb-4"></div>
+    <p class="text-gray-600" id="loadingText">กำลังโหลด...</p>
+   </div><!-- Alert Container -->
+   <div id="alertContainer" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Confirm Modal -->
+   <div id="confirmModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-content bg-white rounded-2xl p-6 max-w-sm w-full text-center">
+     <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center"><i class="ri-error-warning-line text-3xl text-danger"></i>
+     </div>
+     <h3 class="text-xl font-semibold mb-2" id="confirmTitle">ยืนยันการลบ</h3>
+     <p class="text-gray-600 mb-6" id="confirmMessage">คุณต้องการลบข้อมูลนี้หรือไม่?</p>
+     <div class="flex gap-3 justify-center"><button onclick="closeConfirm()" class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-all">ยกเลิก</button> <button id="confirmBtn" class="px-6 py-2 rounded-lg btn-danger">ยืนยัน</button>
+     </div>
+    </div>
+   </div><!-- Login Page -->
+   <div id="loginPage" class="login-bg flex items-center justify-center p-4">
+    <div class="login-card p-8 w-full max-w-md">
+     <div class="text-center mb-8"><img id="loginLogo" src="https://metro.ac.th/cmt2563/imgs/logo/cmt-logo-v2.png" alt="Logo" class="logo-img mx-auto mb-4" loading="lazy" onerror="console.error('Logo failed'); this.style.display='none'; document.getElementById('fallbackIcon').style.display='flex';">
+      <div id="fallbackIcon" class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-primary flex items-center justify-center hidden"><i class="ri-graduation-cap-line text-4xl text-white"></i>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-800" id="appTitle">ประเมินการสอน</h1>
+      <p class="text-gray-500 mt-2">Teacher Evaluation System</p>
+     </div><!-- Login Tabs -->
+     <div class="flex gap-2 mb-6"><button onclick="setLoginTab('admin')" id="tabAdmin" class="tab-btn active flex-1"> <i class="ri-admin-line mr-2"></i>ผู้ดูแล/อาจารย์ </button> <button onclick="setLoginTab('student')" id="tabStudent" class="tab-btn flex-1"> <i class="ri-user-line mr-2"></i>นักศึกษา </button>
+     </div><!-- Admin/Teacher Login Form -->
+     <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+      <div class="mb-4"><label class="block text-gray-700 font-medium mb-2"> <i class="ri-user-3-line mr-2 text-primary"></i>ชื่อผู้ใช้ </label> <input type="text" id="adminUsername" class="input-field" placeholder="กรอกชื่อผู้ใช้" required>
+      </div>
+      <div class="mb-6"><label class="block text-gray-700 font-medium mb-2"> <i class="ri-lock-line mr-2 text-primary"></i>รหัสผ่าน </label> <input type="password" id="adminPassword" class="input-field" placeholder="กรอกรหัสผ่าน" required>
+      </div><button type="submit" class="w-full btn-primary py-3 rounded-xl font-medium text-lg"> <i class="ri-login-box-line mr-2"></i>เข้าสู่ระบบ </button>
+     </form><!-- Student Login Form -->
+     <form id="studentLoginForm" class="hidden" onsubmit="handleStudentLogin(event)">
+      <div class="mb-4"><label class="block text-gray-700 font-medium mb-2"> <i class="ri-id-card-line mr-2 text-primary"></i>รหัสประจำตัวนักศึกษา </label> <input type="text" id="studentId" class="input-field" placeholder="กรอกรหัสประจำตัว" required>
+      </div>
+      <div class="mb-6"><label class="block text-gray-700 font-medium mb-2"> <i class="ri-shield-check-line mr-2 text-primary"></i>รหัสบัตรประชาชน </label> <input type="password" id="studentPassword" class="input-field" placeholder="กรอกรหัสบัตรประชาชน" required>
+      </div><button type="submit" class="w-full btn-primary py-3 rounded-xl font-medium text-lg"> <i class="ri-login-box-line mr-2"></i>เข้าสู่ระบบ </button>
+     </form>
+     <p class="text-center text-gray-400 text-sm mt-6"><i class="ri-shield-check-line mr-1"></i>ระบบปลอดภัย ข้อมูลเป็นความลับ</p>
+    </div>
+   </div><!-- Main App -->
+   <div id="mainApp" class="hidden h-full flex"><!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 z-30 hidden lg:hidden" onclick="toggleSidebar()"></div><!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed lg:static inset-y-0 left-0 z-40 w-64 bg-primary transform -translate-x-full lg:translate-x-0 flex flex-col">
+     <div class="p-6 border-b border-white/20">
+      <div class="flex items-center gap-3">
+       <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center"><i class="ri-graduation-cap-line text-2xl text-white"></i>
+       </div>
+       <div class="text-white">
+        <h2 class="font-semibold">ประเมินการสอน</h2>
+        <p class="text-sm opacity-80" id="userRoleText">ผู้ดูแลระบบ</p>
+       </div>
+      </div>
+     </div>
+     <nav class="flex-1 py-4 overflow-y-auto" id="sidebarMenu">
+     </nav>
+     <div class="p-4 border-t border-white/20">
+      <div class="flex items-center gap-3 text-white mb-4">
+       <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"><i class="ri-user-line text-xl"></i>
+       </div>
+       <div class="flex-1 min-w-0">
+        <p class="font-medium truncate" id="currentUserName">ผู้ใช้งาน</p>
+       </div>
+      </div><button onclick="handleLogout()" class="w-full py-2 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all flex items-center justify-center gap-2"> <i class="ri-logout-box-line"></i>ออกจากระบบ </button>
+     </div>
+    </aside><!-- Main Content -->
+    <main class="flex-1 flex flex-col min-h-0 overflow-hidden"><!-- Header -->
+     <header class="bg-white shadow-sm px-4 lg:px-6 py-4 flex items-center gap-4"><button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-all"> <i class="ri-menu-line text-2xl text-gray-600"></i> </button>
+      <div class="flex-1">
+       <h1 class="text-xl font-semibold text-gray-800" id="pageTitle">แดชบอร์ด</h1>
+       <p class="text-sm text-gray-500" id="pageSubtitle">ภาพรวมระบบ</p>
+      </div>
+      <div class="flex items-center gap-3"><span class="hidden sm:inline text-gray-600" id="currentDate"></span>
+      </div>
+     </header><!-- Content Area -->
+     <div class="flex-1 overflow-auto p-4 lg:p-6" id="contentArea">
+     </div>
+    </main>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      app_title: 'ประเมินการสอน',
+      logo_url: 'https://metro.ac.th/cmt2563/imgs/logo/cmt-logo-v2.png'
+    };
+
+    let config = { ...defaultConfig };
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+          config = { ...defaultConfig, ...newConfig };
+          updateUI();
+        },
+        mapToCapabilities: () => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (cfg) => new Map([
+          ['app_title', cfg.app_title || defaultConfig.app_title],
+          ['logo_url', cfg.logo_url || defaultConfig.logo_url]
+        ])
+      });
+    }
+
+    function updateUI() {
+      document.getElementById('appTitle').textContent = config.app_title || defaultConfig.app_title;
+      const logoImg = document.getElementById('loginLogo');
+      logoImg.src = config.logo_url || defaultConfig.logo_url;
+      logoImg.style.display = 'block';
+      document.getElementById('fallbackIcon').style.display = 'none';
+    }
+
+    const evaluationQuestions = [
+      'มีการเตรียมการสอนทุกครั้ง',
+      'มีเทคนิคการสอนที่ดี กระตุ้นความสนใจ',
+      'ใช้สื่อการสอนที่หลากหลายและทันสมัย',
+      'ให้คำแนะนำ ดูแล ช่วยเหลือด้วยความเต็มใจ',
+      'มีความเป็นกัลยาณมิตร',
+      'เข้าสอนและเลิกสอนตรงเวลา',
+      'ให้การอบรมการปฏิบัติตนที่ดีอย่างสม่ำเสมอ'
+    ];
+
+    const ratingLabels = ['มากที่สุด', 'มาก', 'ปานกลาง', 'น้อย', 'น้อยที่สุด'];
+    const ratingScores = [5, 4, 3, 2, 1];
+
+    let currentUser = null;
+    let loginTab = 'admin';
+
+    function initializeData() {
+      if (!localStorage.getItem('users')) {
+        const defaultUsers = [
+          { id: '1', username: 'admin', password: 'admin123', fullName: 'ผู้ดูแลระบบ', role: 'admin' },
+          { id: '2', username: 'lecturer1', password: 'lecturer123', fullName: 'อาจารย์สมชาย ใจดี', role: 'lecturer' }
+        ];
+        localStorage.setItem('users', JSON.stringify(defaultUsers));
+      }
+      
+      if (!localStorage.getItem('lecturers')) {
+        const defaultLecturers = [
+          { id: '1', name: 'อาจารย์มณัญชญา พรหมพิจารณ์', email: 'mananchaya@ccc.ac.th', department: 'การบัญชี', photo: null },
+          { id: '2', name: 'อาจารย์สิฎฐนิศา ขามะวัน', email: 'sksittinisa@ccc.ac.th', department: 'การบัญชี', photo: null },
+        ];
+        localStorage.setItem('lecturers', JSON.stringify(defaultLecturers));
+      }
+      
+      if (!localStorage.getItem('rooms')) {
+        const defaultRooms = [
+          { id: '1', name: 'AC-401/411', level: 'ปวช.' },
+          { id: '2', name: 'AC-501/511', level: 'ปวส.' },
+        ];
+        localStorage.setItem('rooms', JSON.stringify(defaultRooms));
+      }
+      
+      if (!localStorage.getItem('academicYears')) {
+        const defaultYears = [
+          { id: '1', year: '2567' },
+          { id: '2', year: '2566' }
+        ];
+        localStorage.setItem('academicYears', JSON.stringify(defaultYears));
+      }
+      
+      if (!localStorage.getItem('subjects')) {
+        localStorage.setItem('subjects', JSON.stringify([]));
+      }
+      
+      if (!localStorage.getItem('students')) {
+        localStorage.setItem('students', JSON.stringify([]));
+      }
+      
+      if (!localStorage.getItem('evaluations')) {
+        localStorage.setItem('evaluations', JSON.stringify([]));
+      }
+      
+      if (!localStorage.getItem('evaluationStatus')) {
+        const defaultStatus = { open: true };
+        localStorage.setItem('evaluationStatus', JSON.stringify(defaultStatus));
+      }
+      
+      if (!localStorage.getItem('lecturerRoomAssignment')) {
+        localStorage.setItem('lecturerRoomAssignment', JSON.stringify([]));
+      }
+    }
+
+    function getData(key) {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    }
+
+    function setData(key, data) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function showLoading(text = 'กำลังโหลด...') {
+      const overlay = document.getElementById('loadingOverlay');
+      document.getElementById('loadingText').textContent = text;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+    }
+
+    function hideLoading() {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }
+
+    function showAlert(message, type = 'success') {
+      const container = document.getElementById('alertContainer');
+      const bgColors = {
+        success: 'bg-success',
+        error: 'bg-danger',
+        warning: 'bg-warning',
+        info: 'bg-primary'
+      };
+      const icons = {
+        success: 'ri-check-line',
+        error: 'ri-close-line',
+        warning: 'ri-alert-line',
+        info: 'ri-information-line'
+      };
+      
+      const alert = document.createElement('div');
+      alert.className = `alert ${bgColors[type]} text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 min-w-72`;
+      alert.innerHTML = `
+        <i class="${icons[type]} text-xl"></i>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="hover:bg-white/20 rounded-full p-1">
+          <i class="ri-close-line"></i>
+        </button>
+      `;
+      container.appendChild(alert);
+      
+      setTimeout(() => alert.remove(), 4000);
+    }
+
+    let confirmCallback = null;
+    function showConfirm(title, message, callback) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      confirmCallback = callback;
+      document.getElementById('confirmModal').classList.remove('hidden');
+      document.getElementById('confirmModal').classList.add('flex');
+    }
+
+    function closeConfirm() {
+      document.getElementById('confirmModal').classList.add('hidden');
+      document.getElementById('confirmModal').classList.remove('flex');
+      confirmCallback = null;
+    }
+
+    document.getElementById('confirmBtn').onclick = function() {
+      if (confirmCallback) confirmCallback();
+      closeConfirm();
+    };
+
+    function setLoginTab(tab) {
+      loginTab = tab;
+      document.getElementById('tabAdmin').classList.toggle('active', tab === 'admin');
+      document.getElementById('tabStudent').classList.toggle('active', tab === 'student');
+      document.getElementById('adminLoginForm').classList.toggle('hidden', tab !== 'admin');
+      document.getElementById('studentLoginForm').classList.toggle('hidden', tab !== 'student');
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      showLoading('กำลังเข้าสู่ระบบ...');
+      
+      setTimeout(() => {
+        const username = document.getElementById('adminUsername').value;
+        const password = document.getElementById('adminPassword').value;
+        const users = getData('users');
+        const user = users.find(u => u.username === username && u.password === password);
+        
+        if (user) {
+          currentUser = user;
+          hideLoading();
+          showMainApp();
+          showAlert('เข้าสู่ระบบสำเร็จ', 'success');
+        } else {
+          hideLoading();
+          showAlert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง', 'error');
+        }
+      }, 800);
+    }
+
+    function handleStudentLogin(e) {
+      e.preventDefault();
+      showLoading('กำลังเข้าสู่ระบบ...');
+      
+      setTimeout(() => {
+        const studentId = document.getElementById('studentId').value;
+        const idCard = document.getElementById('studentPassword').value;
+        const students = getData('students');
+        const student = students.find(s => s.studentId === studentId && s.idCard === idCard);
+        
+        if (student) {
+          currentUser = { ...student, role: 'student' };
+          hideLoading();
+          showMainApp();
+          showAlert('เข้าสู่ระบบสำเร็จ', 'success');
+        } else {
+          hideLoading();
+          showAlert('รหัสประจำตัวหรือรหัสบัตรประชาชนไม่ถูกต้อง', 'error');
+        }
+      }, 800);
+    }
+
+    function handleLogout() {
+      showConfirm('ออกจากระบบ', 'คุณต้องการออกจากระบบหรือไม่?', () => {
+        currentUser = null;
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('mainApp').classList.add('hidden');
+        document.getElementById('adminUsername').value = '';
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('studentId').value = '';
+        document.getElementById('studentPassword').value = '';
+        showAlert('ออกจากระบบสำเร็จ', 'info');
+      });
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      
+      if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+    }
+
+    function loadSidebarMenu() {
+      const menu = document.getElementById('sidebarMenu');
+      let menuItems = [];
+      
+      if (currentUser.role === 'admin') {
+        menuItems = [
+          { icon: 'ri-dashboard-line', label: 'แดชบอร์ด', action: 'showDashboard' },
+          { icon: 'ri-user-settings-line', label: 'จัดการผู้ใช้งาน', action: 'showUserManagement' },
+          { icon: 'ri-group-line', label: 'จัดการอาจารย์', action: 'showLecturerManagement' },
+          { icon: 'ri-building-line', label: 'จัดการห้องเรียน', action: 'showRoomManagement' },
+          { icon: 'ri-calendar-line', label: 'จัดการปีการศึกษา', action: 'showAcademicYearManagement' },
+          { icon: 'ri-book-open-line', label: 'จัดการรายวิชา', action: 'showSubjectManagement' },
+          { icon: 'ri-lock-line', label: 'เปิด/ปิดการประเมิน', action: 'showEvaluationStatus' },
+          { icon: 'ri-bar-chart-line', label: 'รวบรวมผลประเมิน', action: 'showAllEvaluations' }
+        ];
+      } else if (currentUser.role === 'lecturer') {
+        menuItems = [
+          { icon: 'ri-dashboard-line', label: 'แดชบอร์ด', action: 'showDashboard' },
+          { icon: 'ri-user-line', label: 'แก้ไขข้อมูลส่วนตัว', action: 'showProfileEdit' },
+          { icon: 'ri-group-line', label: 'จัดการนักศึกษา', action: 'showStudentManagement' },
+          { icon: 'ri-bar-chart-line', label: 'สรุปผลการประเมิน', action: 'showEvaluationSummary' }
+        ];
+      } else if (currentUser.role === 'student') {
+        menuItems = [
+          { icon: 'ri-file-list-3-line', label: 'แบบประเมินการสอน', action: 'showStudentEvaluation' }
+        ];
+      }
+      
+      menu.innerHTML = menuItems.map((item, index) => `
+        <button onclick="${item.action}()" class="menu-item w-full flex items-center gap-3 px-4 py-3 text-white text-left ${index === 0 ? 'active' : ''}" data-menu="${item.action}">
+          <i class="${item.icon} text-xl"></i>
+          <span>${item.label}</span>
+        </button>
+      `).join('');
+    }
+
+    function setActiveMenu(action) {
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.menu === action);
+      });
+    }
+
+    function showMainApp() {
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('hidden');
+      
+      const roleLabels = { admin: 'ผู้ดูแลระบบ', lecturer: 'อาจารย์ผู้สอน', student: 'นักศึกษา' };
+      document.getElementById('userRoleText').textContent = roleLabels[currentUser.role];
+      document.getElementById('currentUserName').textContent = currentUser.fullName || currentUser.studentId;
+      
+      const today = new Date().toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('currentDate').textContent = today;
+      
+      loadSidebarMenu();
+      
+      if (currentUser.role === 'student') {
+        showStudentEvaluation();
+      } else {
+        showDashboard();
+      }
+    }
+
+    // Dashboard
+    function showDashboard() {
+      setActiveMenu('showDashboard');
+      document.getElementById('pageTitle').textContent = 'แดชบอร์ด';
+      document.getElementById('pageSubtitle').textContent = 'ภาพรวมระบบ';
+      
+      const users = getData('users');
+      const lecturers = getData('lecturers');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const subjects = getData('subjects');
+      const students = getData('students');
+      const evaluations = getData('evaluations');
+      
+      let teacherSubjects = subjects;
+      let teacherStudents = students;
+      
+      if (currentUser.role === 'lecturer') {
+        teacherSubjects = subjects.filter(s => s.lecturerId === currentUser.id);
+        const subjectIds = teacherSubjects.map(s => s.id);
+        teacherStudents = students.filter(s => subjectIds.includes(s.subjectId));
+      }
+
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          ${currentUser.role === 'admin' ? `
+            <div class="stat-card bg-primary">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">ผู้ใช้งานทั้งหมด</p>
+                  <p class="text-3xl font-bold">${users.length}</p>
+                </div>
+                <i class="ri-user-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">อาจารย์</p>
+                  <p class="text-3xl font-bold">${lecturers.length}</p>
+                </div>
+                <i class="ri-group-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">ห้องเรียน</p>
+                  <p class="text-3xl font-bold">${rooms.length}</p>
+                </div>
+                <i class="ri-building-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">รายวิชาทั้งหมด</p>
+                  <p class="text-3xl font-bold">${subjects.length}</p>
+                </div>
+                <i class="ri-book-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+          ` : `
+            <div class="stat-card bg-primary">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">รายวิชาของฉัน</p>
+                  <p class="text-3xl font-bold">${teacherSubjects.length}</p>
+                </div>
+                <i class="ri-book-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">นักศึกษาทั้งหมด</p>
+                  <p class="text-3xl font-bold">${teacherStudents.length}</p>
+                </div>
+                <i class="ri-group-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">การประเมินที่ได้รับ</p>
+                  <p class="text-3xl font-bold">${evaluations.filter(e => teacherSubjects.map(s => s.id).includes(e.subjectId)).length}</p>
+                </div>
+                <i class="ri-bar-chart-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-white/80 text-sm">รอประเมิน</p>
+                  <p class="text-3xl font-bold">${teacherStudents.length - evaluations.filter(e => teacherSubjects.map(s => s.id).includes(e.subjectId)).length}</p>
+                </div>
+                <i class="ri-time-line text-4xl text-white/40"></i>
+              </div>
+            </div>
+          `}
+        </div>
+        
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ri-information-line text-primary"></i>
+            ยินดีต้อนรับ
+          </h3>
+          <p class="text-gray-600">
+            สวัสดี <span class="font-medium text-primary">${currentUser.fullName}</span> 
+            ${currentUser.role === 'admin' ? 'คุณสามารถจัดการผู้ใช้งาน อาจารย์ ห้องเรียน และรายวิชาได้จากเมนูด้านซ้าย' : 
+              'คุณสามารถจัดการนักศึกษา และดูสรุปผลการประเมินได้จากเมนูด้านซ้าย'}
+          </p>
+        </div>
+      `;
+    }
+
+    // Admin - User Management
+    function showUserManagement() {
+      setActiveMenu('showUserManagement');
+      document.getElementById('pageTitle').textContent = 'จัดการผู้ใช้งาน';
+      document.getElementById('pageSubtitle').textContent = 'เพิ่ม ลบ แก้ไข ผู้ใช้ในระบบ';
+      
+      const users = getData('users');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h3 class="text-lg font-semibold flex items-center gap-2">
+              <i class="ri-user-settings-line text-primary"></i>
+              รายชื่อผู้ใช้งาน
+            </h3>
+            <button onclick="openUserModal()" class="btn-primary px-4 py-2 rounded-lg flex items-center gap-2">
+              <i class="ri-add-line"></i>เพิ่มผู้ใช้
+            </button>
+          </div>
+          
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>ชื่อผู้ใช้</th>
+                  <th>ชื่อ-นามสกุล</th>
+                  <th>สิทธิ์</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${users.map((user, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td><span class="font-medium">${user.username}</span></td>
+                    <td>${user.fullName}</td>
+                    <td>
+                      <span class="badge ${user.role === 'admin' ? 'bg-primary text-white' : 'bg-success text-gray-800'}">
+                        ${user.role === 'admin' ? 'ผู้ดูแลระบบ' : 'อาจารย์'}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="flex gap-2">
+                        <button onclick="editUser('${user.id}')" class="icon-btn bg-warning">
+                          <i class="ri-edit-line text-white"></i>
+                        </button>
+                        <button onclick="deleteUser('${user.id}')" class="icon-btn bg-danger">
+                          <i class="ri-delete-bin-line text-white"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="userModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-md w-full">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold" id="userModalTitle">เพิ่มผู้ใช้</h3>
+              <button onclick="closeUserModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <form onsubmit="saveUser(event)">
+              <input type="hidden" id="userId">
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">ชื่อผู้ใช้</label>
+                <input type="text" id="userUsername" class="input-field" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">รหัสผ่าน</label>
+                <input type="password" id="userPassword" class="input-field" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">ชื่อ-นามสกุล</label>
+                <input type="text" id="userFullName" class="input-field" required>
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 font-medium mb-2">สิทธิ์การใช้งาน</label>
+                <select id="userRole" class="select-field" required>
+                  <option value="admin">ผู้ดูแลระบบ</option>
+                  <option value="lecturer">อาจารย์</option>
+                </select>
+              </div>
+              <div class="flex gap-3">
+                <button type="button" onclick="closeUserModal()" class="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">ยกเลิก</button>
+                <button type="submit" class="flex-1 py-3 rounded-xl btn-primary">บันทึก</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function openUserModal(id = null) {
+      document.getElementById('userModal').classList.remove('hidden');
+      document.getElementById('userModal').classList.add('flex');
+      document.getElementById('userModalTitle').textContent = id ? 'แก้ไขผู้ใช้' : 'เพิ่มผู้ใช้';
+      document.getElementById('userId').value = id || '';
+      
+      if (id) {
+        const users = getData('users');
+        const user = users.find(u => u.id === id);
+        if (user) {
+          document.getElementById('userUsername').value = user.username;
+          document.getElementById('userPassword').value = user.password;
+          document.getElementById('userFullName').value = user.fullName;
+          document.getElementById('userRole').value = user.role;
+        }
+      } else {
+        document.getElementById('userUsername').value = '';
+        document.getElementById('userPassword').value = '';
+        document.getElementById('userFullName').value = '';
+        document.getElementById('userRole').value = 'lecturer';
+      }
+    }
+
+    function closeUserModal() {
+      document.getElementById('userModal').classList.add('hidden');
+      document.getElementById('userModal').classList.remove('flex');
+    }
+
+    function editUser(id) {
+      openUserModal(id);
+    }
+
+    function deleteUser(id) {
+      showConfirm('ยืนยันการลบ', 'คุณต้องการลบผู้ใช้นี้หรือไม่?', () => {
+        showLoading('กำลังลบ...');
+        setTimeout(() => {
+          const users = getData('users').filter(u => u.id !== id);
+          setData('users', users);
+          hideLoading();
+          showAlert('ลบผู้ใช้สำเร็จ', 'success');
+          showUserManagement();
+        }, 500);
+      });
+    }
+
+    function saveUser(e) {
+      e.preventDefault();
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        const id = document.getElementById('userId').value;
+        const userData = {
+          id: id || generateId(),
+          username: document.getElementById('userUsername').value,
+          password: document.getElementById('userPassword').value,
+          fullName: document.getElementById('userFullName').value,
+          role: document.getElementById('userRole').value
+        };
+        
+        let users = getData('users');
+        if (id) {
+          users = users.map(u => u.id === id ? userData : u);
+        } else {
+          users.push(userData);
+        }
+        
+        setData('users', users);
+        hideLoading();
+        closeUserModal();
+        showAlert(id ? 'แก้ไขผู้ใช้สำเร็จ' : 'เพิ่มผู้ใช้สำเร็จ', 'success');
+        showUserManagement();
+      }, 500);
+    }
+
+    // Admin - Lecturer Management
+    function showLecturerManagement() {
+      setActiveMenu('showLecturerManagement');
+      document.getElementById('pageTitle').textContent = 'จัดการอาจารย์';
+      document.getElementById('pageSubtitle').textContent = 'เพิ่ม ลบ แก้ไข ข้อมูลอาจารย์';
+      
+      const lecturers = getData('lecturers');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h3 class="text-lg font-semibold flex items-center gap-2">
+              <i class="ri-group-line text-primary"></i>
+              รายชื่ออาจารย์
+            </h3>
+            <button onclick="openLecturerModal()" class="btn-primary px-4 py-2 rounded-lg flex items-center gap-2">
+              <i class="ri-add-line"></i>เพิ่มอาจารย์
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            ${lecturers.map((lecturer) => `
+              <div class="card p-4 flex flex-col">
+                <div class="mb-4 flex justify-center">
+                  ${lecturer.photo ? `
+                    <img src="${lecturer.photo}" alt="${lecturer.name}" class="w-24 h-24 rounded-full object-cover border-4 border-primary">
+                  ` : `
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                      <i class="ri-user-line text-4xl text-white"></i>
+                    </div>
+                  `}
+                </div>
+                <h4 class="font-semibold text-center mb-1">${lecturer.name}</h4>
+                <p class="text-sm text-gray-500 text-center mb-2">${lecturer.department || '-'}</p>
+                <p class="text-xs text-gray-400 text-center mb-4 break-all">${lecturer.email}</p>
+                <div class="flex gap-2 mt-auto">
+                  <button onclick="editLecturer('${lecturer.id}')" class="flex-1 btn-warning py-2 rounded-lg flex items-center justify-center gap-1 text-sm">
+                    <i class="ri-edit-line"></i>แก้ไข
+                  </button>
+                  <button onclick="deleteLecturer('${lecturer.id}')" class="flex-1 btn-danger py-2 rounded-lg flex items-center justify-center gap-1 text-sm">
+                    <i class="ri-delete-bin-line"></i>ลบ
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <div id="lecturerModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-md w-full max-h-[90%] overflow-auto">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold" id="lecturerModalTitle">เพิ่มอาจารย์</h3>
+              <button onclick="closeLecturerModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <form onsubmit="saveLecturer(event)">
+              <input type="hidden" id="lecturerId">
+              <div class="mb-4 text-center">
+                <div id="lecturerPhotoPreview" class="w-24 h-24 mx-auto mb-3 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden border-4 border-gray-200">
+                  <i class="ri-user-line text-4xl text-white"></i>
+                </div>
+                <label class="block text-gray-700 font-medium mb-2">รูปภาพอาจารย์</label>
+                <input type="file" id="lecturerPhoto" class="input-field" accept="image/*" onchange="previewLecturerPhoto()">
+                <p class="text-xs text-gray-500 mt-1">ไฟล์รูปภาพ (jpg, png)</p>
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">ชื่อ-นามสกุล</label>
+                <input type="text" id="lecturerName" class="input-field" placeholder="เช่น อาจารย์สมชาย ใจดี" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">สาขาวิชา</label>
+                <input type="text" id="lecturerDepartment" class="input-field" placeholder="เช่น การบัญชี" required>
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 font-medium mb-2">อีเมล</label>
+                <input type="email" id="lecturerEmail" class="input-field" placeholder="อีเมลของอาจารย์" required>
+              </div>
+              <div class="flex gap-3">
+                <button type="button" onclick="closeLecturerModal()" class="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">ยกเลิก</button>
+                <button type="submit" class="flex-1 py-3 rounded-xl btn-primary">บันทึก</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function previewLecturerPhoto() {
+      const fileInput = document.getElementById('lecturerPhoto');
+      const preview = document.getElementById('lecturerPhotoPreview');
+      
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = `<img src="${e.target.result}" alt="preview" class="w-full h-full object-cover">`;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    function openLecturerModal(id = null) {
+      document.getElementById('lecturerModal').classList.remove('hidden');
+      document.getElementById('lecturerModal').classList.add('flex');
+      document.getElementById('lecturerModalTitle').textContent = id ? 'แก้ไขข้อมูลอาจารย์' : 'เพิ่มอาจารย์';
+      document.getElementById('lecturerId').value = id || '';
+      
+      if (id) {
+        const lecturers = getData('lecturers');
+        const lecturer = lecturers.find(l => l.id === id);
+        if (lecturer) {
+          document.getElementById('lecturerName').value = lecturer.name;
+          document.getElementById('lecturerDepartment').value = lecturer.department || '';
+          document.getElementById('lecturerEmail').value = lecturer.email;
+          if (lecturer.photo) {
+            document.getElementById('lecturerPhotoPreview').innerHTML = `<img src="${lecturer.photo}" alt="preview" class="w-full h-full object-cover">`;
+          }
+        }
+      } else {
+        document.getElementById('lecturerName').value = '';
+        document.getElementById('lecturerDepartment').value = '';
+        document.getElementById('lecturerEmail').value = '';
+        document.getElementById('lecturerPhotoPreview').innerHTML = '<i class="ri-user-line text-4xl text-white"></i>';
+      }
+      
+      document.getElementById('lecturerPhoto').value = '';
+    }
+
+    function closeLecturerModal() {
+      document.getElementById('lecturerModal').classList.add('hidden');
+      document.getElementById('lecturerModal').classList.remove('flex');
+    }
+
+    function editLecturer(id) {
+      openLecturerModal(id);
+    }
+
+    function deleteLecturer(id) {
+      showConfirm('ยืนยันการลบ', 'คุณต้องการลบอาจารย์นี้หรือไม่?', () => {
+        showLoading('กำลังลบ...');
+        setTimeout(() => {
+          const lecturers = getData('lecturers').filter(l => l.id !== id);
+          setData('lecturers', lecturers);
+          hideLoading();
+          showAlert('ลบข้อมูลอาจารย์สำเร็จ', 'success');
+          showLecturerManagement();
+        }, 500);
+      });
+    }
+
+    function saveLecturer(e) {
+      e.preventDefault();
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        const id = document.getElementById('lecturerId').value;
+        const fileInput = document.getElementById('lecturerPhoto');
+        
+        const processLecturer = (photoData) => {
+          const lecturerData = {
+            id: id || generateId(),
+            name: document.getElementById('lecturerName').value,
+            department: document.getElementById('lecturerDepartment').value,
+            email: document.getElementById('lecturerEmail').value,
+            photo: photoData
+          };
+          
+          let lecturers = getData('lecturers');
+          if (id) {
+            lecturers = lecturers.map(l => {
+              if (l.id === id) {
+                return { ...l, ...lecturerData };
+              }
+              return l;
+            });
+          } else {
+            lecturers.push(lecturerData);
+          }
+          
+          setData('lecturers', lecturers);
+          hideLoading();
+          closeLecturerModal();
+          showAlert(id ? 'แก้ไขข้อมูลอาจารย์สำเร็จ' : 'เพิ่มอาจารย์สำเร็จ', 'success');
+          showLecturerManagement();
+        };
+        
+        if (fileInput.files && fileInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            processLecturer(e.target.result);
+          };
+          reader.readAsDataURL(fileInput.files[0]);
+        } else {
+          if (id) {
+            const lecturers = getData('lecturers');
+            const existing = lecturers.find(l => l.id === id);
+            processLecturer(existing?.photo || null);
+          } else {
+            processLecturer(null);
+          }
+        }
+      }, 500);
+    }
+
+    // Admin - Room Management
+    function showRoomManagement() {
+      setActiveMenu('showRoomManagement');
+      document.getElementById('pageTitle').textContent = 'จัดการห้องเรียน';
+      document.getElementById('pageSubtitle').textContent = 'เพิ่ม ลบ แก้ไข ห้องเรียน';
+      
+      const rooms = getData('rooms');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h3 class="text-lg font-semibold flex items-center gap-2">
+              <i class="ri-building-line text-primary"></i>
+              รายชื่อห้องเรียน
+            </h3>
+            <button onclick="openRoomModal()" class="btn-primary px-4 py-2 rounded-lg flex items-center gap-2">
+              <i class="ri-add-line"></i>เพิ่มห้องเรียน
+            </button>
+          </div>
+          
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>ชื่อห้อง</th>
+                  <th>ระดับชั้น</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rooms.map((room, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td><span class="font-medium">${room.name}</span></td>
+                    <td>
+                      <span class="badge ${room.level === 'ปวช.' ? 'bg-success text-gray-800' : 'bg-primary text-white'}">
+                        ${room.level}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="flex gap-2">
+                        <button onclick="editRoom('${room.id}')" class="icon-btn bg-warning">
+                          <i class="ri-edit-line text-white"></i>
+                        </button>
+                        <button onclick="deleteRoom('${room.id}')" class="icon-btn bg-danger">
+                          <i class="ri-delete-bin-line text-white"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="roomModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-md w-full">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold" id="roomModalTitle">เพิ่มห้องเรียน</h3>
+              <button onclick="closeRoomModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <form onsubmit="saveRoom(event)">
+              <input type="hidden" id="roomId">
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">ชื่อห้อง</label>
+                <input type="text" id="roomName" class="input-field" placeholder="เช่น 1/1, 2/3" required>
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 font-medium mb-2">ระดับชั้น</label>
+                <select id="roomLevel" class="select-field" required>
+                  <option value="ปวช.">ปวช. (ประกาศนียบัตรวิชาชีพ)</option>
+                  <option value="ปวส.">ปวส. (ประกาศนียบัตรวิชาชีพชั้นสูง)</option>
+                </select>
+              </div>
+              <div class="flex gap-3">
+                <button type="button" onclick="closeRoomModal()" class="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">ยกเลิก</button>
+                <button type="submit" class="flex-1 py-3 rounded-xl btn-primary">บันทึก</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function openRoomModal(id = null) {
+      document.getElementById('roomModal').classList.remove('hidden');
+      document.getElementById('roomModal').classList.add('flex');
+      document.getElementById('roomModalTitle').textContent = id ? 'แก้ไขห้องเรียน' : 'เพิ่มห้องเรียน';
+      document.getElementById('roomId').value = id || '';
+      
+      if (id) {
+        const rooms = getData('rooms');
+        const room = rooms.find(c => c.id === id);
+        if (room) {
+          document.getElementById('roomName').value = room.name;
+          document.getElementById('roomLevel').value = room.level;
+        }
+      } else {
+        document.getElementById('roomName').value = '';
+        document.getElementById('roomLevel').value = 'ปวช.';
+      }
+    }
+
+    function closeRoomModal() {
+      document.getElementById('roomModal').classList.add('hidden');
+      document.getElementById('roomModal').classList.remove('flex');
+    }
+
+    function editRoom(id) {
+      openRoomModal(id);
+    }
+
+    function deleteRoom(id) {
+      showConfirm('ยืนยันการลบ', 'คุณต้องการลบห้องเรียนนี้หรือไม่?', () => {
+        showLoading('กำลังลบ...');
+        setTimeout(() => {
+          const rooms = getData('rooms').filter(c => c.id !== id);
+          setData('rooms', rooms);
+          hideLoading();
+          showAlert('ลบห้องเรียนสำเร็จ', 'success');
+          showRoomManagement();
+        }, 500);
+      });
+    }
+
+    function saveRoom(e) {
+      e.preventDefault();
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        const id = document.getElementById('roomId').value;
+        const roomData = {
+          id: id || generateId(),
+          name: document.getElementById('roomName').value,
+          level: document.getElementById('roomLevel').value
+        };
+        
+        let rooms = getData('rooms');
+        if (id) {
+          rooms = rooms.map(c => c.id === id ? roomData : c);
+        } else {
+          rooms.push(roomData);
+        }
+        
+        setData('rooms', rooms);
+        hideLoading();
+        closeRoomModal();
+        showAlert(id ? 'แก้ไขห้องเรียนสำเร็จ' : 'เพิ่มห้องเรียนสำเร็จ', 'success');
+        showRoomManagement();
+      }, 500);
+    }
+
+    // Admin - Academic Year Management
+    function showAcademicYearManagement() {
+      setActiveMenu('showAcademicYearManagement');
+      document.getElementById('pageTitle').textContent = 'จัดการปีการศึกษา';
+      document.getElementById('pageSubtitle').textContent = 'เพิ่ม ลบ แก้ไข ปีการศึกษา';
+      
+      const academicYears = getData('academicYears');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h3 class="text-lg font-semibold flex items-center gap-2">
+              <i class="ri-calendar-line text-primary"></i>
+              ปีการศึกษา
+            </h3>
+            <button onclick="openYearModal()" class="btn-primary px-4 py-2 rounded-lg flex items-center gap-2">
+              <i class="ri-add-line"></i>เพิ่มปีการศึกษา
+            </button>
+          </div>
+          
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>ปีการศึกษา</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${academicYears.map((year, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td><span class="font-medium text-lg">${year.year}</span></td>
+                    <td>
+                      <div class="flex gap-2">
+                        <button onclick="editYear('${year.id}')" class="icon-btn bg-warning">
+                          <i class="ri-edit-line text-white"></i>
+                        </button>
+                        <button onclick="deleteYear('${year.id}')" class="icon-btn bg-danger">
+                          <i class="ri-delete-bin-line text-white"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="yearModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-md w-full">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold" id="yearModalTitle">เพิ่มปีการศึกษา</h3>
+              <button onclick="closeYearModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <form onsubmit="saveYear(event)">
+              <input type="hidden" id="yearId">
+              <div class="mb-6">
+                <label class="block text-gray-700 font-medium mb-2">ปีการศึกษา</label>
+                <input type="text" id="yearValue" class="input-field" placeholder="เช่น 2567" required>
+              </div>
+              <div class="flex gap-3">
+                <button type="button" onclick="closeYearModal()" class="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">ยกเลิก</button>
+                <button type="submit" class="flex-1 py-3 rounded-xl btn-primary">บันทึก</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function openYearModal(id = null) {
+      document.getElementById('yearModal').classList.remove('hidden');
+      document.getElementById('yearModal').classList.add('flex');
+      document.getElementById('yearModalTitle').textContent = id ? 'แก้ไขปีการศึกษา' : 'เพิ่มปีการศึกษา';
+      document.getElementById('yearId').value = id || '';
+      
+      if (id) {
+        const years = getData('academicYears');
+        const year = years.find(y => y.id === id);
+        if (year) {
+          document.getElementById('yearValue').value = year.year;
+        }
+      } else {
+        document.getElementById('yearValue').value = '';
+      }
+    }
+
+    function closeYearModal() {
+      document.getElementById('yearModal').classList.add('hidden');
+      document.getElementById('yearModal').classList.remove('flex');
+    }
+
+    function editYear(id) {
+      openYearModal(id);
+    }
+
+    function deleteYear(id) {
+      showConfirm('ยืนยันการลบ', 'คุณต้องการลบปีการศึกษานี้หรือไม่?', () => {
+        showLoading('กำลังลบ...');
+        setTimeout(() => {
+          const years = getData('academicYears').filter(y => y.id !== id);
+          setData('academicYears', years);
+          hideLoading();
+          showAlert('ลบปีการศึกษาสำเร็จ', 'success');
+          showAcademicYearManagement();
+        }, 500);
+      });
+    }
+
+    function saveYear(e) {
+      e.preventDefault();
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        const id = document.getElementById('yearId').value;
+        const yearData = {
+          id: id || generateId(),
+          year: document.getElementById('yearValue').value
+        };
+        
+        let years = getData('academicYears');
+        if (id) {
+          years = years.map(y => y.id === id ? yearData : y);
+        } else {
+          years.push(yearData);
+        }
+        
+        setData('academicYears', years);
+        hideLoading();
+        closeYearModal();
+        showAlert(id ? 'แก้ไขปีการศึกษาสำเร็จ' : 'เพิ่มปีการศึกษาสำเร็จ', 'success');
+        showAcademicYearManagement();
+      }, 500);
+    }
+
+    // Admin - Subject Management
+    function showSubjectManagement() {
+      setActiveMenu('showSubjectManagement');
+      document.getElementById('pageTitle').textContent = 'จัดการรายวิชา';
+      document.getElementById('pageSubtitle').textContent = 'เพิ่ม ลบ แก้ไข รายวิชา';
+      
+      const subjects = getData('subjects');
+      const lecturers = getData('lecturers');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h3 class="text-lg font-semibold flex items-center gap-2">
+              <i class="ri-book-open-line text-primary"></i>
+              รายวิชาทั้งหมด
+            </h3>
+            <button onclick="openSubjectModal()" class="btn-primary px-4 py-2 rounded-lg flex items-center gap-2">
+              <i class="ri-add-line"></i>เพิ่มรายวิชา
+            </button>
+          </div>
+          
+          <div class="table-container">
+            <table class="custom-table text-sm">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>ชื่อรายวิชา</th>
+                  <th>อาจารย์</th>
+                  <th>ห้อง</th>
+                  <th>ระดับชั้น</th>
+                  <th>ปีการศึกษา</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${subjects.map((subject, index) => {
+                  const lecturer = lecturers.find(l => l.id === subject.lecturerId) || {};
+                  const room = rooms.find(c => c.id === subject.roomId) || {};
+                  const year = academicYears.find(y => y.id === subject.academicYearId) || {};
+                  return `
+                    <tr>
+                      <td>${index + 1}</td>
+                      <td><span class="font-medium">${subject.name}</span></td>
+                      <td>${lecturer.name || '-'}</td>
+                      <td>${room.name || '-'}</td>
+                      <td>
+                        <span class="badge ${room.level === 'ปวช.' ? 'bg-success text-gray-800' : 'bg-primary text-white'}">
+                          ${room.level || '-'}
+                        </span>
+                      </td>
+                      <td>${year.year || '-'}</td>
+                      <td>
+                        <div class="flex gap-2">
+                          <button onclick="editSubject('${subject.id}')" class="icon-btn bg-warning">
+                            <i class="ri-edit-line text-white"></i>
+                          </button>
+                          <button onclick="deleteSubject('${subject.id}')" class="icon-btn bg-danger">
+                            <i class="ri-delete-bin-line text-white"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="subjectModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-md w-full max-h-[90%] overflow-auto">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold" id="subjectModalTitle">เพิ่มรายวิชา</h3>
+              <button onclick="closeSubjectModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <form onsubmit="saveSubject(event)">
+              <input type="hidden" id="subjectId">
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">ชื่อรายวิชา</label>
+                <input type="text" id="subjectName" class="input-field" placeholder="เช่น ภาษาไทย" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">อาจารย์ผู้สอน</label>
+                <select id="subjectLecturer" class="select-field" required>
+                  <option value="">เลือกอาจารย์</option>
+                  ${lecturers.map(l => `<option value="${l.id}">${l.name}</option>`).join('')}
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">ห้องเรียน</label>
+                <select id="subjectRoom" class="select-field" required>
+                  <option value="">เลือกห้อง</option>
+                  ${rooms.map(c => `<option value="${c.id}">${c.name} - ${c.level}</option>`).join('')}
+                </select>
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 font-medium mb-2">ปีการศึกษา</label>
+                <select id="subjectYear" class="select-field" required>
+                  <option value="">เลือกปีการศึกษา</option>
+                  ${academicYears.map(y => `<option value="${y.id}">${y.year}</option>`).join('')}
+                </select>
+              </div>
+              <div class="flex gap-3">
+                <button type="button" onclick="closeSubjectModal()" class="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">ยกเลิก</button>
+                <button type="submit" class="flex-1 py-3 rounded-xl btn-primary">บันทึก</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function openSubjectModal(id = null) {
+      document.getElementById('subjectModal').classList.remove('hidden');
+      document.getElementById('subjectModal').classList.add('flex');
+      document.getElementById('subjectModalTitle').textContent = id ? 'แก้ไขรายวิชา' : 'เพิ่มรายวิชา';
+      document.getElementById('subjectId').value = id || '';
+      
+      if (id) {
+        const subjects = getData('subjects');
+        const subject = subjects.find(s => s.id === id);
+        if (subject) {
+          document.getElementById('subjectName').value = subject.name;
+          document.getElementById('subjectLecturer').value = subject.lecturerId;
+          document.getElementById('subjectRoom').value = subject.roomId;
+          document.getElementById('subjectYear').value = subject.academicYearId;
+        }
+      } else {
+        document.getElementById('subjectName').value = '';
+        document.getElementById('subjectLecturer').value = '';
+        document.getElementById('subjectRoom').value = '';
+        document.getElementById('subjectYear').value = '';
+      }
+    }
+
+    function closeSubjectModal() {
+      document.getElementById('subjectModal').classList.add('hidden');
+      document.getElementById('subjectModal').classList.remove('flex');
+    }
+
+    function editSubject(id) {
+      openSubjectModal(id);
+    }
+
+    function deleteSubject(id) {
+      showConfirm('ยืนยันการลบ', 'คุณต้องการลบรายวิชานี้หรือไม่?', () => {
+        showLoading('กำลังลบ...');
+        setTimeout(() => {
+          const subjects = getData('subjects').filter(s => s.id !== id);
+          setData('subjects', subjects);
+          hideLoading();
+          showAlert('ลบรายวิชาสำเร็จ', 'success');
+          showSubjectManagement();
+        }, 500);
+      });
+    }
+
+    function saveSubject(e) {
+      e.preventDefault();
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        const id = document.getElementById('subjectId').value;
+        const subjectData = {
+          id: id || generateId(),
+          name: document.getElementById('subjectName').value,
+          lecturerId: document.getElementById('subjectLecturer').value,
+          roomId: document.getElementById('subjectRoom').value,
+          academicYearId: document.getElementById('subjectYear').value
+        };
+        
+        let subjects = getData('subjects');
+        if (id) {
+          subjects = subjects.map(s => s.id === id ? subjectData : s);
+        } else {
+          subjects.push(subjectData);
+        }
+        
+        setData('subjects', subjects);
+        hideLoading();
+        closeSubjectModal();
+        showAlert(id ? 'แก้ไขรายวิชาสำเร็จ' : 'เพิ่มรายวิชาสำเร็จ', 'success');
+        showSubjectManagement();
+      }, 500);
+    }
+
+    // Admin - Evaluation Status
+    function showEvaluationStatus() {
+      setActiveMenu('showEvaluationStatus');
+      document.getElementById('pageTitle').textContent = 'เปิด/ปิดการประเมิน';
+      document.getElementById('pageSubtitle').textContent = 'จัดการสถานะการประเมินรายวิชา';
+      
+      const subjects = getData('subjects');
+      const lecturers = getData('lecturers');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const lecturerRoomAssignment = getData('lecturerRoomAssignment');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6">
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+              <i class="ri-lock-line text-primary"></i>
+              สถานะการประเมินรายวิชา
+            </h3>
+            <p class="text-gray-600 text-sm">กำหนดการเปิด-ปิดการประเมินสำหรับแต่ละรายวิชา</p>
+          </div>
+          
+          <div class="table-container">
+            <table class="custom-table text-sm">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>รายวิชา</th>
+                  <th>อาจารย์</th>
+                  <th>ห้อง</th>
+                  <th>ปีการศึกษา</th>
+                  <th>สถานะ</th>
+                  <th>จัดการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${subjects.map((subject, index) => {
+                  const lecturer = lecturers.find(l => l.id === subject.lecturerId) || {};
+                  const room = rooms.find(c => c.id === subject.roomId) || {};
+                  const year = academicYears.find(y => y.id === subject.academicYearId) || {};
+                  const assignment = lecturerRoomAssignment.find(a => a.lecturerId === subject.lecturerId && a.roomId === subject.roomId);
+                  const isOpen = assignment?.isOpen !== false;
+                  
+                  return `
+                    <tr>
+                      <td>${index + 1}</td>
+                      <td><span class="font-medium">${subject.name}</span></td>
+                      <td>${lecturer.name || '-'}</td>
+                      <td>${room.name || '-'}</td>
+                      <td>${year.year || '-'}</td>
+                      <td>
+                        <span class="badge ${isOpen ? 'bg-success text-gray-800' : 'bg-danger text-white'}">
+                          ${isOpen ? 'เปิดได้' : 'ปิด'}
+                        </span>
+                      </td>
+                      <td>
+                        <button onclick="toggleEvaluationStatus('${subject.lecturerId}', '${subject.roomId}', ${!isOpen})" class="btn-${isOpen ? 'danger' : 'success'} px-3 py-2 rounded-lg text-sm">
+                          ${isOpen ? 'ปิด' : 'เปิด'}
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleEvaluationStatus(lecturerId, roomId, shouldOpen) {
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        let assignments = getData('lecturerRoomAssignment');
+        const existingIndex = assignments.findIndex(a => a.lecturerId === lecturerId && a.roomId === roomId);
+        
+        if (existingIndex >= 0) {
+          assignments[existingIndex].isOpen = shouldOpen;
+        } else {
+          assignments.push({ lecturerId, roomId, isOpen: shouldOpen });
+        }
+        
+        setData('lecturerRoomAssignment', assignments);
+        hideLoading();
+        showAlert(shouldOpen ? 'เปิดการประเมินสำเร็จ' : 'ปิดการประเมินสำเร็จ', 'success');
+        showEvaluationStatus();
+      }, 500);
+    }
+
+    // Admin - All Evaluations Summary
+    function showAllEvaluations() {
+      setActiveMenu('showAllEvaluations');
+      document.getElementById('pageTitle').textContent = 'รวบรวมผลประเมิน';
+      document.getElementById('pageSubtitle').textContent = 'ผลการประเมินของอาจารย์แต่ละท่าน';
+      
+      const lecturers = getData('lecturers');
+      const subjects = getData('subjects');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const evaluations = getData('evaluations');
+      
+      const content = document.getElementById('contentArea');
+      
+      let summaryHTML = `
+        <div class="card p-6 mb-6">
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ri-bar-chart-line text-primary"></i>
+            สรุปผลการประเมินแต่ละอาจารย์
+          </h3>
+          
+          <div class="table-container">
+            <table class="custom-table text-sm">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>ชื่ออาจารย์</th>
+                  <th>ห้องเรียน</th>
+                  <th>ระดับชั้น</th>
+                  <th>ปีการศึกษา</th>
+                  <th>ผลเฉลี่ย (%)</th>
+                  <th>ดูรายละเอียด</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+      
+      const lecturerRoomData = {};
+      
+      lecturers.forEach(lecturer => {
+        const lecturerSubjects = subjects.filter(s => s.lecturerId === lecturer.id);
+        const uniqueRoomYears = new Set();
+        
+        lecturerSubjects.forEach(subject => {
+          const room = rooms.find(r => r.id === subject.roomId);
+          const year = academicYears.find(y => y.id === subject.academicYearId);
+          const key = `${room?.id}|${year?.id}`;
+          
+          if (!uniqueRoomYears.has(key)) {
+            uniqueRoomYears.add(key);
+            
+            const subjectsForRoom = lecturerSubjects.filter(s => 
+              s.roomId === subject.roomId && s.academicYearId === subject.academicYearId
+            );
+            const evalsForRoom = evaluations.filter(e => 
+              subjectsForRoom.some(s => s.id === e.subjectId)
+            );
+            
+            let avgPercent = '-';
+            if (evalsForRoom.length > 0) {
+              let totalPercent = 0;
+              evalsForRoom.forEach(ev => {
+                if (ev.ratings) {
+                  const score = ev.ratings.reduce((sum, r) => sum + r, 0);
+                  const max = ev.ratings.length * 5;
+                  totalPercent += (score / max) * 100;
+                }
+              });
+              avgPercent = (totalPercent / evalsForRoom.length).toFixed(1) + '%';
+            }
+            
+            if (!lecturerRoomData[lecturer.id]) {
+              lecturerRoomData[lecturer.id] = [];
+            }
+            
+            lecturerRoomData[lecturer.id].push({
+              lecturerId: lecturer.id,
+              lecturerName: lecturer.name,
+              roomId: subject.roomId,
+              roomName: room?.name || '-',
+              roomLevel: room?.level || '-',
+              yearId: subject.academicYearId,
+              year: year?.year || '-',
+              avgPercent,
+              subjectIds: subjectsForRoom.map(s => s.id),
+              evalCount: evalsForRoom.length
+            });
+          }
+        });
+      });
+      
+      let rowIndex = 1;
+      Object.values(lecturerRoomData).flat().forEach(data => {
+        summaryHTML += `
+          <tr>
+            <td>${rowIndex}</td>
+            <td><span class="font-medium">${data.lecturerName}</span></td>
+            <td>${data.roomName}</td>
+            <td>
+              <span class="badge ${data.roomLevel === 'ปวช.' ? 'bg-success text-gray-800' : 'bg-primary text-white'}">
+                ${data.roomLevel}
+              </span>
+            </td>
+            <td>${data.year}</td>
+            <td><span class="font-medium text-primary">${data.avgPercent}</span></td>
+            <td>
+              <button onclick="showLecturerEvaluationDetail('${data.lecturerId}', '${data.roomId}', '${data.yearId}')" class="icon-btn bg-primary">
+                <i class="ri-eye-line text-white"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+        rowIndex++;
+      });
+      
+      summaryHTML += `
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="evalDetailModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[90%] overflow-auto">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold">รายละเอียดการประเมิน</h3>
+              <button onclick="closeEvalDetailModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <div id="evalDetailContent"></div>
+          </div>
+        </div>
+      `;
+      
+      content.innerHTML = summaryHTML;
+    }
+
+    function showLecturerEvaluationDetail(lecturerId, roomId, yearId) {
+      const lecturers = getData('lecturers');
+      const subjects = getData('subjects');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const evaluations = getData('evaluations');
+      const students = getData('students');
+      
+      const lecturer = lecturers.find(l => l.id === lecturerId);
+      const room = rooms.find(r => r.id === roomId);
+      const year = academicYears.find(y => y.id === yearId);
+      
+      const subjectsForRoom = subjects.filter(s => 
+        s.lecturerId === lecturerId && s.roomId === roomId && s.academicYearId === yearId
+      );
+      
+      const evalsForRoom = evaluations.filter(e => 
+        subjectsForRoom.some(s => s.id === e.subjectId)
+      );
+      
+      // Calculate summary
+      const questionSummary = evaluationQuestions.map((q, qIndex) => {
+        const ratingCounts = [0, 0, 0, 0, 0];
+        evalsForRoom.forEach(ev => {
+          if (ev.ratings && ev.ratings[qIndex]) {
+            const rating = ev.ratings[qIndex];
+            ratingCounts[5 - rating]++;
+          }
+        });
+        
+        let totalScore = 0;
+        let totalResponses = 0;
+        ratingCounts.forEach((count, i) => {
+          totalScore += count * (5 - i);
+          totalResponses += count;
+        });
+        
+        const percentage = totalResponses > 0 ? ((totalScore / (totalResponses * 5)) * 100).toFixed(1) : 0;
+        
+        return { question: q, counts: ratingCounts, percentage };
+      });
+      
+      let overallPercent = 0;
+      if (questionSummary.length > 0) {
+        overallPercent = (questionSummary.reduce((sum, q) => sum + parseFloat(q.percentage), 0) / questionSummary.length).toFixed(1);
+      }
+      
+      const thoughts = evalsForRoom.filter(e => e.thought).map(e => e.thought);
+      const suggestions = evalsForRoom.filter(e => e.suggestion).map(e => e.suggestion);
+      
+      document.getElementById('evalDetailContent').innerHTML = `
+        <div class="bg-gray-50 rounded-xl p-4 mb-6">
+          <h4 class="font-semibold text-lg mb-4 text-primary">รายละเอียดการประเมิน</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div><span class="text-gray-500">ชื่ออาจารย์:</span> <span class="font-medium">${lecturer?.name || '-'}</span></div>
+            <div><span class="text-gray-500">ห้องเรียน:</span> <span class="font-medium">${room?.name || '-'}</span></div>
+            <div><span class="text-gray-500">ระดับชั้น:</span> <span class="font-medium">${room?.level || '-'}</span></div>
+            <div><span class="text-gray-500">ปีการศึกษา:</span> <span class="font-medium">${year?.year || '-'}</span></div>
+            <div><span class="text-gray-500">จำนวนการประเมิน:</span> <span class="font-medium">${evalsForRoom.length}</span></div>
+            <div><span class="text-gray-500">จำนวนรายวิชา:</span> <span class="font-medium">${subjectsForRoom.length}</span></div>
+          </div>
+        </div>
+        
+        <div class="table-container mb-6">
+          <table class="custom-table text-sm">
+            <thead>
+              <tr>
+                <th>ข้อที่</th>
+                <th>รายการประเมิน</th>
+                <th class="text-center">มากที่สุด</th>
+                <th class="text-center">มาก</th>
+                <th class="text-center">ปานกลาง</th>
+                <th class="text-center">น้อย</th>
+                <th class="text-center">น้อยที่สุด</th>
+                <th class="text-center">ร้อยละ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${questionSummary.map((item, index) => `
+                <tr>
+                  <td class="text-center">${index + 1}</td>
+                  <td class="text-xs">${item.question}</td>
+                  <td class="text-center">${item.counts[0]}</td>
+                  <td class="text-center">${item.counts[1]}</td>
+                  <td class="text-center">${item.counts[2]}</td>
+                  <td class="text-center">${item.counts[3]}</td>
+                  <td class="text-center">${item.counts[4]}</td>
+                  <td class="text-center font-medium text-primary">${item.percentage}%</td>
+                </tr>
+              `).join('')}
+              <tr class="bg-primary/10">
+                <td colspan="7" class="font-semibold text-right">ผลประเมินในภาพรวม</td>
+                <td class="text-center font-bold text-primary text-lg">${overallPercent}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        ${thoughts.length > 0 ? `
+          <div class="mb-4">
+            <h5 class="font-semibold mb-2 flex items-center gap-2">
+              <i class="ri-lightbulb-line text-secondary"></i>
+              ความคิดเห็นของนักศึกษา
+            </h5>
+            <div class="bg-gray-50 p-3 rounded-lg space-y-2">
+              ${thoughts.map(t => `<p class="text-gray-600 text-sm">• ${t}</p>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+        
+        ${suggestions.length > 0 ? `
+          <div>
+            <h5 class="font-semibold mb-2 flex items-center gap-2">
+              <i class="ri-chat-1-line text-primary"></i>
+              ข้อเสนอแนะ
+            </h5>
+            <div class="bg-gray-50 p-3 rounded-lg space-y-2">
+              ${suggestions.map(s => `<p class="text-gray-600 text-sm">• ${s}</p>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+      `;
+      
+      document.getElementById('evalDetailModal').classList.remove('hidden');
+      document.getElementById('evalDetailModal').classList.add('flex');
+    }
+
+    function closeEvalDetailModal() {
+      document.getElementById('evalDetailModal').classList.add('hidden');
+      document.getElementById('evalDetailModal').classList.remove('flex');
+    }
+
+    // Lecturer - Profile Edit
+    function showProfileEdit() {
+      setActiveMenu('showProfileEdit');
+      document.getElementById('pageTitle').textContent = 'แก้ไขข้อมูลส่วนตัว';
+      document.getElementById('pageSubtitle').textContent = 'แก้ไขข้อมูลบัญชีผู้ใช้';
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6 max-w-lg">
+          <h3 class="text-lg font-semibold mb-6 flex items-center gap-2">
+            <i class="ri-user-line text-primary"></i>
+            ข้อมูลส่วนตัว
+          </h3>
+          
+          <form onsubmit="saveLecturerProfile(event)">
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">ชื่อผู้ใช้</label>
+              <input type="text" id="lecturerUsername" class="input-field" value="${currentUser.username}" required>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">รหัสผ่าน</label>
+              <input type="password" id="lecturerPassword" class="input-field" value="${currentUser.password}" required>
+            </div>
+            <div class="mb-6">
+              <label class="block text-gray-700 font-medium mb-2">ชื่อ-นามสกุล</label>
+              <input type="text" id="lecturerFullName" class="input-field" value="${currentUser.fullName}" required>
+            </div>
+            <button type="submit" class="btn-primary px-6 py-3 rounded-xl">
+              <i class="ri-save-line mr-2"></i>บันทึกข้อมูล
+            </button>
+          </form>
+        </div>
+      `;
+    }
+
+    function saveLecturerProfile(e) {
+      e.preventDefault();
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        const updatedUser = {
+          ...currentUser,
+          username: document.getElementById('lecturerUsername').value,
+          password: document.getElementById('lecturerPassword').value,
+          fullName: document.getElementById('lecturerFullName').value
+        };
+        
+        let users = getData('users');
+        users = users.map(u => u.id === currentUser.id ? updatedUser : u);
+        setData('users', users);
+        
+        currentUser = updatedUser;
+        document.getElementById('currentUserName').textContent = currentUser.fullName;
+        
+        hideLoading();
+        showAlert('บันทึกข้อมูลสำเร็จ', 'success');
+      }, 500);
+    }
+
+    // Lecturer - Student Management
+    function showStudentManagement() {
+      setActiveMenu('showStudentManagement');
+      document.getElementById('pageTitle').textContent = 'จัดการนักศึกษา';
+      document.getElementById('pageSubtitle').textContent = 'เพิ่ม ลบ แก้ไข นักศึกษา';
+      
+      const subjects = getData('subjects').filter(s => s.lecturerId === currentUser.id);
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      
+      const subjectOptions = subjects.map(s => {
+        const room = rooms.find(c => c.id === s.roomId) || {};
+        const year = academicYears.find(y => y.id === s.academicYearId) || {};
+        return `<option value="${s.id}">${s.name} - ${room.name} - ${room.level} - ${year.year}</option>`;
+      }).join('');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6 mb-6">
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ri-filter-line text-primary"></i>
+            เลือกรายวิชา
+          </h3>
+          <select id="studentSubjectFilter" onchange="loadStudentList()" class="select-field max-w-xl">
+            <option value="">-- เลือกรายวิชา --</option>
+            ${subjectOptions}
+          </select>
+        </div>
+        
+        <div id="studentListContainer" class="hidden">
+          <div class="card p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <h3 class="text-lg font-semibold flex items-center gap-2">
+                <i class="ri-group-line text-primary"></i>
+                รายชื่อนักศึกษา
+              </h3>
+              <button onclick="openStudentModal()" class="btn-primary px-4 py-2 rounded-lg flex items-center gap-2">
+                <i class="ri-add-line"></i>เพิ่มนักศึกษา
+              </button>
+            </div>
+            
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ลำดับ</th>
+                    <th>รหัสประจำตัว</th>
+                    <th>ชื่อ-นามสกุล</th>
+                    <th>สถานะประเมิน</th>
+                    <th>ผลประเมิน (%)</th>
+                    <th>จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <div id="studentModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-md w-full">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold" id="studentModalTitle">เพิ่มนักศึกษา</h3>
+              <button onclick="closeStudentModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <form onsubmit="saveStudent(event)">
+              <input type="hidden" id="studentRecordId">
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">รหัสประจำตัวนักศึกษา</label>
+                <input type="text" id="studentIdInput" class="input-field" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2">ชื่อ-นามสกุล</label>
+                <input type="text" id="studentFullName" class="input-field" required>
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 font-medium mb-2">รหัสบัตรประชาชน</label>
+                <input type="text" id="studentIdCard" class="input-field" placeholder="กรอกรหัสบัตรประชาชน" required>
+              </div>
+              <div class="flex gap-3">
+                <button type="button" onclick="closeStudentModal()" class="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">ยกเลิก</button>
+                <button type="submit" class="flex-1 py-3 rounded-xl btn-primary">บันทึก</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function loadStudentList() {
+      const subjectId = document.getElementById('studentSubjectFilter').value;
+      const container = document.getElementById('studentListContainer');
+      
+      if (!subjectId) {
+        container.classList.add('hidden');
+        return;
+      }
+      
+      container.classList.remove('hidden');
+      
+      const students = getData('students').filter(s => s.subjectId === subjectId);
+      const evaluations = getData('evaluations');
+      
+      const tbody = document.getElementById('studentTableBody');
+      tbody.innerHTML = students.map((student, index) => {
+        const evaluation = evaluations.find(e => e.studentId === student.id && e.subjectId === subjectId);
+        const hasEvaluated = !!evaluation;
+        let evalPercent = '-';
+        
+        if (hasEvaluated && evaluation.ratings) {
+          const totalScore = evaluation.ratings.reduce((sum, r) => sum + r, 0);
+          const maxScore = evaluation.ratings.length * 5;
+          evalPercent = ((totalScore / maxScore) * 100).toFixed(1) + '%';
+        }
+        
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td><span class="font-medium">${student.studentId}</span></td>
+            <td>${student.fullName}</td>
+            <td>
+              <span class="badge ${hasEvaluated ? 'bg-success text-gray-800' : 'bg-warning text-gray-800'}">
+                ${hasEvaluated ? 'ประเมินแล้ว' : 'ยังไม่ประเมิน'}
+              </span>
+            </td>
+            <td><span class="font-medium text-primary">${evalPercent}</span></td>
+            <td>
+              <div class="flex gap-2">
+                <button onclick="editStudent('${student.id}')" class="icon-btn bg-warning">
+                  <i class="ri-edit-line text-white"></i>
+                </button>
+                <button onclick="deleteStudent('${student.id}')" class="icon-btn bg-danger">
+                  <i class="ri-delete-bin-line text-white"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      
+      if (students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-gray-500 py-8">ยังไม่มีนักศึกษาในรายวิชานี้</td></tr>';
+      }
+    }
+
+    function openStudentModal(id = null) {
+      document.getElementById('studentModal').classList.remove('hidden');
+      document.getElementById('studentModal').classList.add('flex');
+      document.getElementById('studentModalTitle').textContent = id ? 'แก้ไขนักศึกษา' : 'เพิ่มนักศึกษา';
+      document.getElementById('studentRecordId').value = id || '';
+      
+      if (id) {
+        const students = getData('students');
+        const student = students.find(s => s.id === id);
+        if (student) {
+          document.getElementById('studentIdInput').value = student.studentId;
+          document.getElementById('studentFullName').value = student.fullName;
+          document.getElementById('studentIdCard').value = student.idCard || '';
+        }
+      } else {
+        document.getElementById('studentIdInput').value = '';
+        document.getElementById('studentFullName').value = '';
+        document.getElementById('studentIdCard').value = '';
+      }
+    }
+
+    function closeStudentModal() {
+      document.getElementById('studentModal').classList.add('hidden');
+      document.getElementById('studentModal').classList.remove('flex');
+    }
+
+    function editStudent(id) {
+      openStudentModal(id);
+    }
+
+    function deleteStudent(id) {
+      showConfirm('ยืนยันการลบ', 'คุณต้องการลบนักศึกษานี้หรือไม่?', () => {
+        showLoading('กำลังลบ...');
+        setTimeout(() => {
+          const students = getData('students').filter(s => s.id !== id);
+          setData('students', students);
+          hideLoading();
+          showAlert('ลบนักศึกษาสำเร็จ', 'success');
+          loadStudentList();
+        }, 500);
+      });
+    }
+
+    function saveStudent(e) {
+      e.preventDefault();
+      showLoading('กำลังบันทึก...');
+      
+      setTimeout(() => {
+        const id = document.getElementById('studentRecordId').value;
+        const subjectId = document.getElementById('studentSubjectFilter').value;
+        
+        const studentData = {
+          id: id || generateId(),
+          studentId: document.getElementById('studentIdInput').value,
+          fullName: document.getElementById('studentFullName').value,
+          idCard: document.getElementById('studentIdCard').value,
+          subjectId: subjectId
+        };
+        
+        let students = getData('students');
+        if (id) {
+          students = students.map(s => s.id === id ? studentData : s);
+        } else {
+          students.push(studentData);
+        }
+        
+        setData('students', students);
+        hideLoading();
+        closeStudentModal();
+        showAlert(id ? 'แก้ไขนักศึกษาสำเร็จ' : 'เพิ่มนักศึกษาสำเร็จ', 'success');
+        loadStudentList();
+      }, 500);
+    }
+
+    // Lecturer - Evaluation Summary
+    function showEvaluationSummary() {
+      setActiveMenu('showEvaluationSummary');
+      document.getElementById('pageTitle').textContent = 'สรุปผลการประเมิน';
+      document.getElementById('pageSubtitle').textContent = 'ดูภาพรวมผลการประเมินการสอน';
+      
+      const subjects = getData('subjects').filter(s => s.lecturerId === currentUser.id);
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const evaluations = getData('evaluations');
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold mb-6 flex items-center gap-2">
+            <i class="ri-bar-chart-line text-primary"></i>
+            สรุปผลการประเมินรายวิชา
+          </h3>
+          
+          <div class="table-container">
+            <table class="custom-table text-sm">
+              <thead>
+                <tr>
+                  <th>ลำดับ</th>
+                  <th>รายวิชา</th>
+                  <th>ห้อง</th>
+                  <th>ระดับชั้น</th>
+                  <th>ปีการศึกษา</th>
+                  <th>สถานะ</th>
+                  <th>ผลประเมิน (%)</th>
+                  <th>ดูรายละเอียด</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${subjects.map((subject, index) => {
+                  const room = rooms.find(c => c.id === subject.roomId) || {};
+                  const year = academicYears.find(y => y.id === subject.academicYearId) || {};
+                  const subjectEvals = evaluations.filter(e => e.subjectId === subject.id);
+                  
+                  let avgPercent = '-';
+                  if (subjectEvals.length > 0) {
+                    let totalPercent = 0;
+                    subjectEvals.forEach(ev => {
+                      if (ev.ratings) {
+                        const score = ev.ratings.reduce((sum, r) => sum + r, 0);
+                        const max = ev.ratings.length * 5;
+                        totalPercent += (score / max) * 100;
+                      }
+                    });
+                    avgPercent = (totalPercent / subjectEvals.length).toFixed(1) + '%';
+                  }
+                  
+                  return `
+                    <tr>
+                      <td>${index + 1}</td>
+                      <td><span class="font-medium">${subject.name}</span></td>
+                      <td>${room.name || '-'}</td>
+                      <td>
+                        <span class="badge ${room.level === 'ปวช.' ? 'bg-success text-gray-800' : 'bg-primary text-white'}">
+                          ${room.level || '-'}
+                        </span>
+                      </td>
+                      <td>${year.year || '-'}</td>
+                      <td>
+                        <span class="badge ${subjectEvals.length > 0 ? 'bg-success text-gray-800' : 'bg-warning text-gray-800'}">
+                          ${subjectEvals.length > 0 ? 'มีการประเมิน' : 'ยังไม่มี'}
+                        </span>
+                      </td>
+                      <td><span class="font-medium text-primary">${avgPercent}</span></td>
+                      <td>
+                        ${subjectEvals.length > 0 ? `
+                          <button onclick="showSubjectEvaluationDetail('${subject.id}')" class="icon-btn bg-primary">
+                            <i class="ri-eye-line text-white"></i>
+                          </button>
+                        ` : '<span class="text-gray-400">-</span>'}
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="evalDetailModal" class="modal fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-content bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[90%] overflow-auto">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-semibold">รายละเอียดการประเมิน</h3>
+              <button onclick="closeEvalDetailModal()" class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ri-close-line text-xl"></i>
+              </button>
+            </div>
+            <div id="evalDetailContent"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function showSubjectEvaluationDetail(subjectId) {
+      const subjects = getData('subjects');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const evaluations = getData('evaluations').filter(e => e.subjectId === subjectId);
+      
+      const subject = subjects.find(s => s.id === subjectId);
+      const room = rooms.find(c => c.id === subject?.roomId) || {};
+      const year = academicYears.find(y => y.id === subject?.academicYearId) || {};
+      
+      const questionSummary = evaluationQuestions.map((q, qIndex) => {
+        const ratingCounts = [0, 0, 0, 0, 0];
+        evaluations.forEach(ev => {
+          if (ev.ratings && ev.ratings[qIndex]) {
+            const rating = ev.ratings[qIndex];
+            ratingCounts[5 - rating]++;
+          }
+        });
+        
+        let totalScore = 0;
+        let totalResponses = 0;
+        ratingCounts.forEach((count, i) => {
+          totalScore += count * (5 - i);
+          totalResponses += count;
+        });
+        
+        const percentage = totalResponses > 0 ? ((totalScore / (totalResponses * 5)) * 100).toFixed(1) : 0;
+        
+        return { question: q, counts: ratingCounts, percentage };
+      });
+      
+      let overallPercent = 0;
+      if (questionSummary.length > 0) {
+        overallPercent = (questionSummary.reduce((sum, q) => sum + parseFloat(q.percentage), 0) / questionSummary.length).toFixed(1);
+      }
+      
+      const thoughts = evaluations.filter(e => e.thought).map(e => e.thought);
+      const suggestions = evaluations.filter(e => e.suggestion).map(e => e.suggestion);
+      
+      document.getElementById('evalDetailContent').innerHTML = `
+        <div class="bg-gray-50 rounded-xl p-4 mb-6">
+          <h4 class="font-semibold text-lg mb-4 text-primary">รายละเอียดการประเมิน</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div><span class="text-gray-500">รายวิชา:</span> <span class="font-medium">${subject?.name || '-'}</span></div>
+            <div><span class="text-gray-500">ห้อง:</span> <span class="font-medium">${room.name || '-'}</span></div>
+            <div><span class="text-gray-500">ระดับชั้น:</span> <span class="font-medium">${room.level || '-'}</span></div>
+            <div><span class="text-gray-500">ปีการศึกษา:</span> <span class="font-medium">${year.year || '-'}</span></div>
+            <div><span class="text-gray-500">จำนวนการประเมิน:</span> <span class="font-medium">${evaluations.length}</span></div>
+          </div>
+        </div>
+        
+        <div class="table-container mb-6">
+          <table class="custom-table text-sm">
+            <thead>
+              <tr>
+                <th>ข้อที่</th>
+                <th>รายการประเมิน</th>
+                <th class="text-center">มากที่สุด</th>
+                <th class="text-center">มาก</th>
+                <th class="text-center">ปานกลาง</th>
+                <th class="text-center">น้อย</th>
+                <th class="text-center">น้อยที่สุด</th>
+                <th class="text-center">ร้อยละ</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${questionSummary.map((item, index) => `
+                <tr>
+                  <td class="text-center">${index + 1}</td>
+                  <td class="text-xs">${item.question}</td>
+                  <td class="text-center">${item.counts[0]}</td>
+                  <td class="text-center">${item.counts[1]}</td>
+                  <td class="text-center">${item.counts[2]}</td>
+                  <td class="text-center">${item.counts[3]}</td>
+                  <td class="text-center">${item.counts[4]}</td>
+                  <td class="text-center font-medium text-primary">${item.percentage}%</td>
+                </tr>
+              `).join('')}
+              <tr class="bg-primary/10">
+                <td colspan="7" class="font-semibold text-right">ผลประเมินในภาพรวม</td>
+                <td class="text-center font-bold text-primary text-lg">${overallPercent}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        ${thoughts.length > 0 ? `
+          <div class="mb-4">
+            <h5 class="font-semibold mb-2 flex items-center gap-2">
+              <i class="ri-lightbulb-line text-secondary"></i>
+              ความคิดเห็นของนักศึกษา
+            </h5>
+            <div class="bg-gray-50 p-3 rounded-lg space-y-2">
+              ${thoughts.map(t => `<p class="text-gray-600 text-sm">• ${t}</p>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+        
+        ${suggestions.length > 0 ? `
+          <div>
+            <h5 class="font-semibold mb-2 flex items-center gap-2">
+              <i class="ri-chat-1-line text-primary"></i>
+              ข้อเสนอแนะ
+            </h5>
+            <div class="bg-gray-50 p-3 rounded-lg space-y-2">
+              ${suggestions.map(s => `<p class="text-gray-600 text-sm">• ${s}</p>`).join('')}
+            </div>
+          </div>
+        ` : ''}
+      `;
+      
+      document.getElementById('evalDetailModal').classList.remove('hidden');
+      document.getElementById('evalDetailModal').classList.add('flex');
+    }
+
+    function closeEvalDetailModal() {
+      document.getElementById('evalDetailModal').classList.add('hidden');
+      document.getElementById('evalDetailModal').classList.remove('flex');
+    }
+
+    // Student - Evaluation Form
+    function showStudentEvaluation() {
+      setActiveMenu('showStudentEvaluation');
+      document.getElementById('pageTitle').textContent = 'แบบประเมินการสอน';
+      document.getElementById('pageSubtitle').textContent = 'ประเมินการสอนของอาจารย์';
+      
+      const students = getData('students').filter(s => s.studentId === currentUser.studentId);
+      const subjects = getData('subjects');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const lecturers = getData('lecturers');
+      const evaluations = getData('evaluations');
+      const lecturerRoomAssignment = getData('lecturerRoomAssignment');
+      
+      const studentSubjects = students.map(s => {
+        const subject = subjects.find(sub => sub.id === s.subjectId);
+        if (!subject) return null;
+        
+        const room = rooms.find(c => c.id === subject.roomId) || {};
+        const year = academicYears.find(y => y.id === subject.academicYearId) || {};
+        const lecturer = lecturers.find(l => l.id === subject.lecturerId) || {};
+        const hasEvaluated = evaluations.some(e => e.studentId === s.id && e.subjectId === subject.id);
+        const assignment = lecturerRoomAssignment.find(a => a.lecturerId === subject.lecturerId && a.roomId === subject.roomId);
+        const canEvaluate = assignment?.isOpen !== false;
+        
+        return {
+          studentRecordId: s.id,
+          subjectId: subject.id,
+          lecturerId: lecturer.id,
+          lecturerName: lecturer.name,
+          roomId: room.id,
+          label: `${subject.name} (${lecturer.name}) - ${room.name} - ${room.level} - ${year.year}`,
+          status: hasEvaluated ? 'ประเมินแล้ว' : 'ยังไม่ประเมิน',
+          hasEvaluated,
+          canEvaluate
+        };
+      }).filter(Boolean);
+      
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="card p-6 mb-6">
+          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <i class="ri-filter-line text-primary"></i>
+            เลือกรายวิชาที่ต้องการประเมิน
+          </h3>
+          <select id="evalSubjectSelect" onchange="loadStudentEvaluationForm()" class="select-field max-w-xl">
+            <option value="">-- เลือกรายวิชา --</option>
+            ${studentSubjects.map(s => `
+              <option value="${s.studentRecordId}|${s.subjectId}|${s.lecturerId}|${s.roomId}" ${s.hasEvaluated || !s.canEvaluate ? 'disabled' : ''}>
+                ${s.label} (${s.status}) ${!s.canEvaluate ? '- ปิดการประเมิน' : ''}
+              </option>
+            `).join('')}
+          </select>
+        </div>
+        
+        <div id="evaluationFormContainer" class="hidden">
+        </div>
+      `;
+    }
+
+    function loadStudentEvaluationForm() {
+      const selectValue = document.getElementById('evalSubjectSelect').value;
+      const container = document.getElementById('evaluationFormContainer');
+      
+      if (!selectValue) {
+        container.classList.add('hidden');
+        return;
+      }
+      
+      const [studentRecordId, subjectId, lecturerId, roomId] = selectValue.split('|');
+      
+      const subjects = getData('subjects');
+      const rooms = getData('rooms');
+      const academicYears = getData('academicYears');
+      const lecturers = getData('lecturers');
+      
+      const subject = subjects.find(s => s.id === subjectId);
+      const room = rooms.find(c => c.id === roomId) || {};
+      const year = academicYears.find(y => y.id === subject?.academicYearId) || {};
+      const lecturer = lecturers.find(l => l.id === lecturerId) || {};
+      
+      container.classList.remove('hidden');
+      container.innerHTML = `
+        <div class="card p-6">
+          <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-xl p-6 mb-6">
+            <h3 class="text-xl font-semibold mb-4">แบบประเมินการสอน</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+              <div><span class="opacity-80">ปีการศึกษา:</span> <span class="font-medium">${year.year || '-'}</span></div>
+              <div><span class="opacity-80">ห้องเรียน:</span> <span class="font-medium">${room.name || '-'}</span></div>
+              <div><span class="opacity-80">ระดับชั้น:</span> <span class="font-medium">${room.level || '-'}</span></div>
+              <div><span class="opacity-80">วิชา:</span> <span class="font-medium">${subject?.name || '-'}</span></div>
+              <div class="sm:col-span-2"><span class="opacity-80">ชื่ออาจารย์:</span> <span class="font-medium">${lecturer.name || '-'}</span></div>
+            </div>
+          </div>
+          
+          <form onsubmit="submitStudentEvaluation(event, '${studentRecordId}', '${subjectId}')">
+            <div class="mb-6">
+              <h4 class="font-semibold mb-4 text-gray-700">ประเมินพฤติกรรมการสอน</h4>
+              
+              ${evaluationQuestions.map((q, index) => `
+                <div class="mb-6 p-4 bg-gray-50 rounded-xl">
+                  <p class="font-medium mb-3">${index + 1}. ${q}</p>
+                  <div class="radio-rating">
+                    ${ratingLabels.map((label, rIndex) => `
+                      <input type="radio" id="q${index}_r${rIndex}" name="q${index}" value="${5 - rIndex}" required>
+                      <label for="q${index}_r${rIndex}" class="text-center">
+                        ${label}
+                      </label>
+                    `).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">
+                <i class="ri-lightbulb-line mr-2 text-secondary"></i>
+                เมื่อนึกถึงอาจารย์ท่านนี้นักศึกษามักจะนึกถึงอะไร (ไม่บังคับ)
+              </label>
+              <textarea id="evalThought" class="input-field" rows="3" placeholder="กรอกความคิดเห็น..."></textarea>
+            </div>
+            
+            <div class="mb-6">
+              <label class="block text-gray-700 font-medium mb-2">
+                <i class="ri-chat-1-line mr-2 text-primary"></i>
+                ข้อเสนอแนะเพิ่มเติม (ไม่บังคับ)
+              </label>
+              <textarea id="evalSuggestion" class="input-field" rows="3" placeholder="กรอกข้อเสนอแนะ..."></textarea>
+            </div>
+            
+            <button type="submit" class="w-full btn-primary py-4 rounded-xl text-lg font-medium">
+              <i class="ri-send-plane-line mr-2"></i>ส่งแบบประเมิน
+            </button>
+          </form>
+        </div>
+      `;
+    }
+
+    function submitStudentEvaluation(e, studentRecordId, subjectId) {
+      e.preventDefault();
+      showLoading('กำลังบันทึกการประเมิน...');
+      
+      setTimeout(() => {
+        const ratings = evaluationQuestions.map((_, index) => {
+          const selected = document.querySelector(`input[name="q${index}"]:checked`);
+          return selected ? parseInt(selected.value) : 0;
+        });
+        
+        const evaluation = {
+          id: generateId(),
+          studentId: studentRecordId,
+          subjectId: subjectId,
+          ratings: ratings,
+          thought: document.getElementById('evalThought').value,
+          suggestion: document.getElementById('evalSuggestion').value,
+          createdAt: new Date().toISOString()
+        };
+        
+        const evaluations = getData('evaluations');
+        evaluations.push(evaluation);
+        setData('evaluations', evaluations);
+        
+        hideLoading();
+        showAlert('ส่งแบบประเมินสำเร็จ ขอบคุณสำหรับความคิดเห็น', 'success');
+        showStudentEvaluation();
+      }, 800);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeData();
+      updateUI();
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c95f8a4927c4b94',t:'MTc3MDMzMTg3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+ <!-- Firebase SDK -->
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+  // 1️⃣ ตั้งค่า Firebase
+  const firebaseConfig = {
+    apiKey: "ใส่_apiKey_ของคุณ",
+    authDomain: "evaluation-20d16.firebaseapp.com",
+    databaseURL: "https://evaluation-20d16-default-rtdb.firebaseio.com",
+    projectId: "evaluation-20d16",
+    storageBucket: "evaluation-20d16.appspot.com",
+    messagingSenderId: "152711860487",
+    appId: "1:152711860487:web:xxxxx"
+  };
+
+  // 2️⃣ เริ่มใช้งาน Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // 3️⃣ เชื่อมต่อ Realtime Database
+  const database = firebase.database();
+
+  // 4️⃣ ทดสอบเขียนข้อมูล
+  database.ref("test").set({
+    message: "สวัสดี Firebase 👋",
+    time: new Date().toISOString()
+  });
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+  // 1️⃣ ตั้งค่าการเชื่อม Firebase
+  const firebaseConfig = {
+    apiKey: "ใส่ของคุณ",
+    authDomain: "evaluation-20d16.firebaseapp.com",
+    databaseURL: "https://evaluation-20d16-default-rtdb.firebaseio.com",
+    projectId: "evaluation-20d16",
+    storageBucket: "evaluation-20d16.appspot.com",
+    messagingSenderId: "152711860487",
+    appId: "1:152711860487:web:XXXX"
+  };
+
+  // 2️⃣ เริ่มใช้งาน Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // 3️⃣ เรียกใช้งาน Realtime Database
+  const database = firebase.database();
+
+  // 4️⃣ ทดสอบเขียนข้อมูล (เรียลไทม์)
+  database.ref("test").set({
+    message: "สวัสดี Firebase 🎉",
+    time: new Date().toISOString()
+  });
+</script>
+</body>
+</html>
